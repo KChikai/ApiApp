@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_web_view.*
@@ -12,21 +13,26 @@ import androidx.appcompat.app.AlertDialog
 
 class WebViewActivity : AppCompatActivity() {
 
-    var onClickAddFavorite: ((Shop) -> Unit)? = null
-    var onClickDeleteFavorite: ((Shop) -> Unit)? = null
+//    var onClickAddFavorite: ((Shop) -> Unit)? = null
+//    var onClickDeleteFavorite: ((Shop) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_view)
 
-        var shop = intent.getSerializableExtra(KEY_ID)
+        val shop = intent.getSerializableExtra(KEY_ID)
         if (shop is Shop) {
+            Log.d("url sp:", shop.couponUrls.sp)
+            Log.d("url pc:", shop.couponUrls.pc)
+
             webView.loadUrl(if(shop.couponUrls.sp.isNotEmpty()) shop.couponUrls.sp else shop.couponUrls.pc)
+
 
             var isFavorite = FavoriteShop.findBy(shop.id) != null
             favoriteImageView.apply {
                 setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_border)
                 setOnClickListener {
+                    isFavorite = FavoriteShop.findBy(shop.id) != null
                     if (isFavorite) {
                         showConfirmDeleteFavoriteDialog(shop.id)
                     } else {
@@ -36,6 +42,7 @@ class WebViewActivity : AppCompatActivity() {
             }
         }
     }
+
 
     /**
      *  Add favorite data
@@ -47,6 +54,7 @@ class WebViewActivity : AppCompatActivity() {
             imageUrl = shop.logoImage
             url = if (shop.couponUrls.sp.isNotEmpty()) shop.couponUrls.sp else shop.couponUrls.pc
         })
+        favoriteImageView.setImageResource(R.drawable.ic_star)
     }
 
     /**
@@ -65,6 +73,7 @@ class WebViewActivity : AppCompatActivity() {
     }
     private fun deleteFavoriteData(id: String){
         FavoriteShop.delete(id)
+        favoriteImageView.setImageResource(R.drawable.ic_star_border)
     }
 
     companion object {

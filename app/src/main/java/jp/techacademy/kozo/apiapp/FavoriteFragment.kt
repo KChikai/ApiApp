@@ -22,6 +22,11 @@ class FavoriteFragment : Fragment(){
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateData()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // fragment_favorite.xmlが反映されたViewを作成して、returnします
         return inflater.inflate(R.layout.fragment_favorite, container, false)
